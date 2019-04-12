@@ -13,7 +13,7 @@ const testCase = [
     ['.', '9', '8', '.', '.', '.', '.', '6', '.'],
     ['8', '.', '.', '.', '6', '.', '.', '.', '3'],
     ['4', '.', '.', '8', '.', '3', '.', '.', '1'],
-    ['7', '.', '.', '.', '2', '.', '.', '.', '6'],
+    ['7', '.', '.', '.', '.', '.', '.', '.', '6'],
     ['.', '6', '.', '.', '.', '.', '2', '8', '.'],
     ['.', '.', '.', '4', '1', '9', '.', '.', '5'],
     ['.', '.', '.', '.', '8', '.', '.', '7', '9'],
@@ -75,11 +75,33 @@ const createOptionsArray = board => {
                 ).sort();
                 options[rowNum][colNum] = availableNumbers;
             } else {
-                options[rowNum][colNum] = EMPTY;
+                options[rowNum][colNum] = [];
             }
         }
     }
     return options;
+};
+
+const applyOptionsWithOnlyOnePerBlank = (board, options) => {
+    for (let rowNum = 0; rowNum < BOARD_SIZE; rowNum++) {
+        for (let colNum = 0; colNum < BOARD_SIZE; colNum++) {
+            if (options[rowNum][colNum].length === 1) {
+                board[rowNum][colNum] = options[rowNum][colNum][0];
+                // options[rowNum][colNum] = [];
+            }
+        }
+    }
+};
+
+const areThereBlanksWithOnlyOneOption = options => {
+    for (let rowNum = 0; rowNum < BOARD_SIZE; rowNum++) {
+        for (let colNum = 0; colNum < BOARD_SIZE; colNum++) {
+            if (options[rowNum][colNum].length === 1) {
+                return true;
+            }
+        }
+    }
+    return false;
 };
 
 /**
@@ -87,9 +109,19 @@ const createOptionsArray = board => {
  * @return {void} Do not return anything, modify board in-place instead.
  */
 var solveSudoku = function(board) {
-    const options = createOptionsArray(board);
+    let options = createOptionsArray(board);
+    let iteration = 1;
 
-    console.log('options', options);
+    while (areThereBlanksWithOnlyOneOption(options)) {
+        applyOptionsWithOnlyOnePerBlank(board, options);
+        options = createOptionsArray(board);
+        console.group(`Iteration ${iteration}`);
+        console.log('board', board);
+        console.log('options', options);
+        console.groupEnd(`Iteration ${iteration}`);
+
+        iteration++;
+    }
 };
 
 const solvedSudoku = solveSudoku(testCase);
