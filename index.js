@@ -13,11 +13,13 @@ const testCase = [
     ['.', '9', '8', '.', '.', '.', '.', '6', '.'],
     ['8', '.', '.', '.', '6', '.', '.', '.', '3'],
     ['4', '.', '.', '8', '.', '3', '.', '.', '1'],
-    ['7', '.', '.', '.', '.', '.', '.', '.', '6'],
+    ['7', '.', '.', '.', '2', '.', '.', '.', '6'],
     ['.', '6', '.', '.', '.', '.', '2', '8', '.'],
     ['.', '.', '.', '4', '1', '9', '.', '.', '5'],
     ['.', '.', '.', '.', '8', '.', '.', '7', '9'],
 ];
+
+let counter = 0;
 
 const printSudoku = board => {
     console.log(board);
@@ -41,6 +43,7 @@ const getOptionsInRow = row => {
 const getOptionsInCol = (board, colNum) => {
     const currentNumbers = [];
     for (let rowNum = 0; rowNum < BOARD_SIZE; rowNum++) {
+        counter++;
         if (board[rowNum][colNum] !== EMPTY) {
             currentNumbers.push(board[rowNum][colNum]);
         }
@@ -54,6 +57,7 @@ const getOptionsInSquare = ({ board, rowNum, colNum }) => {
 
     for (let rowNum = squareRowNum * 3; rowNum < squareRowNum * 3 + 3; rowNum++) {
         for (let colNum = squareColNum * 3; colNum < squareColNum * 3 + 3; colNum++) {
+            counter++;
             if (board[rowNum][colNum] !== EMPTY) {
                 currentNumbers.push(board[rowNum][colNum]);
             }
@@ -68,6 +72,7 @@ const createOptionsArray = board => {
     for (let rowNum = 0; rowNum < BOARD_SIZE; rowNum++) {
         options[rowNum] = [];
         for (let colNum = 0; colNum < BOARD_SIZE; colNum++) {
+            counter++;
             if (board[rowNum][colNum] === EMPTY) {
                 const availableNumbers = intersectArrays(
                     intersectArrays(getOptionsInRow(board[rowNum]), getOptionsInCol(board, colNum)),
@@ -85,9 +90,9 @@ const createOptionsArray = board => {
 const applyOptionsWithOnlyOnePerBlank = (board, options) => {
     for (let rowNum = 0; rowNum < BOARD_SIZE; rowNum++) {
         for (let colNum = 0; colNum < BOARD_SIZE; colNum++) {
+            counter++;
             if (options[rowNum][colNum].length === 1) {
                 board[rowNum][colNum] = options[rowNum][colNum][0];
-                // options[rowNum][colNum] = [];
             }
         }
     }
@@ -96,12 +101,12 @@ const applyOptionsWithOnlyOnePerBlank = (board, options) => {
 const areThereBlanksWithOnlyOneOption = options => {
     for (let rowNum = 0; rowNum < BOARD_SIZE; rowNum++) {
         for (let colNum = 0; colNum < BOARD_SIZE; colNum++) {
+            counter++;
             if (options[rowNum][colNum].length === 1) {
                 return true;
             }
         }
     }
-    return false;
 };
 
 /**
@@ -122,6 +127,8 @@ var solveSudoku = function(board) {
 
         iteration++;
     }
+
+    console.log('Counter (the lower the better):', counter);
 };
 
 const solvedSudoku = solveSudoku(testCase);
