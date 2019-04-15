@@ -13,7 +13,7 @@ const testCase = [
     ['.', '9', '8', '.', '.', '.', '.', '6', '.'],
     ['8', '.', '.', '.', '6', '.', '.', '.', '3'],
     ['4', '.', '.', '8', '.', '3', '.', '.', '1'],
-    ['7', '.', '.', '.', '2', '.', '.', '.', '6'],
+    ['7', '.', '.', '.', '.', '.', '.', '.', '6'],
     ['.', '6', '.', '.', '.', '.', '2', '8', '.'],
     ['.', '.', '.', '4', '1', '9', '.', '.', '5'],
     ['.', '.', '.', '.', '8', '.', '.', '7', '9'],
@@ -21,8 +21,22 @@ const testCase = [
 
 let counter = 0;
 
-const printSudoku = board => {
-    console.log(board);
+const printDebug = (board, options) => {
+    console.group('Board');
+    for (let rowNum = 0; rowNum < BOARD_SIZE; rowNum++) {
+        console.log(
+            ` ${board[rowNum][0]} `,
+            ` ${board[rowNum][1]} `,
+            ` ${board[rowNum][2]} `,
+            ` ${board[rowNum][3]} `,
+            ` ${board[rowNum][4]} `,
+            ` ${board[rowNum][5]} `,
+            ` ${board[rowNum][6]} `,
+            ` ${board[rowNum][7]} `,
+            ` ${board[rowNum][8]} `,
+        );
+    }
+    console.groupEnd('Board');
 };
 
 const intersectArrays = (a1, a2) => {
@@ -109,6 +123,18 @@ const areThereBlanksWithOnlyOneOption = options => {
     }
 };
 
+const isSolved = board => {
+    for (let rowNum = 0; rowNum < BOARD_SIZE; rowNum++) {
+        for (let colNum = 0; colNum < BOARD_SIZE; colNum++) {
+            counter++;
+            if (board[rowNum][colNum] === EMPTY) {
+                return false;
+            }
+        }
+    }
+    return true;
+};
+
 /**
  * @param {character[][]} board
  * @return {void} Do not return anything, modify board in-place instead.
@@ -117,19 +143,14 @@ var solveSudoku = function(board) {
     let options = createOptionsArray(board);
     let iteration = 1;
 
-    while (areThereBlanksWithOnlyOneOption(options)) {
+    while (areThereBlanksWithOnlyOneOption(options) && !isSolved(board)) {
         applyOptionsWithOnlyOnePerBlank(board, options);
         options = createOptionsArray(board);
-        console.group(`Iteration ${iteration}`);
-        console.log('board', board);
-        console.log('options', options);
-        console.groupEnd(`Iteration ${iteration}`);
-
+        printDebug(board, options);
         iteration++;
     }
 
     console.log('Counter (the lower the better):', counter);
 };
 
-const solvedSudoku = solveSudoku(testCase);
-printSudoku(solvedSudoku);
+solveSudoku(testCase);
